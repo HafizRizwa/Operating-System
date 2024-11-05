@@ -1,0 +1,102 @@
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt, QSize
+import sys
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        
+        # Remove native title bar and set window flags for custom styling
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Window)
+        
+        # Set the main window size and title
+        self.setWindowTitle("PyQt5 Full Black Theme")
+        self.setGeometry(100, 100, 1200, 600)
+        self.setStyleSheet("background-color: #000000;")  # Black background for the entire window
+        
+        # Create a custom title bar
+        title_bar = QWidget(self)
+        title_bar.setFixedHeight(40)
+        title_bar.setStyleSheet("background-color: #000000;")  # Title bar in black
+        
+        # Layout for title bar buttons
+        title_layout = QHBoxLayout()
+        title_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Minimize, Maximize, and Close Buttons
+        button_size = QSize(20, 20)  # Size for the custom buttons
+
+        # Minimize Button
+        minimize_button = QPushButton("-")
+        minimize_button.setFixedSize(button_size)
+        minimize_button.setStyleSheet("background-color: #444444; color: white; border: none;")
+        minimize_button.clicked.connect(self.showMinimized)
+        title_layout.addWidget(minimize_button)
+        
+        # Maximize/Restore Button
+        self.isMaximized = False
+        maximize_button = QPushButton("⬜")
+        maximize_button.setFixedSize(button_size)
+        maximize_button.setStyleSheet("background-color: #444444; color: white; border: none;")
+        maximize_button.clicked.connect(self.toggleMaxRestore)
+        title_layout.addWidget(maximize_button)
+        
+        # Close Button
+        close_button = QPushButton("✕")
+        close_button.setFixedSize(button_size)
+        close_button.setStyleSheet("background-color: #ff4444; color: white; border: none;")
+        close_button.clicked.connect(self.close)
+        title_layout.addWidget(close_button)
+
+        title_bar.setLayout(title_layout)
+        
+        # Set the background image on the main window
+        background_label = QLabel(self)
+        background_pixmap = QPixmap("background.png")  # Replace with your background image path
+        background_pixmap = background_pixmap.scaled(1200, 800, Qt.KeepAspectRatioByExpanding)
+        background_label.setPixmap(background_pixmap)
+        background_label.setGeometry(0, 40, 1200, 800)  # Adjusted position to leave space for the title bar
+        
+        # Create a customizable sidebar (container widget) in black
+        sidebar_width = 80  # Adjust the sidebar width here
+        icon_size = QSize(40, 40)  # Customize icon size here
+
+        sidebar = QWidget(self)
+        sidebar.setGeometry(0, 40, sidebar_width, 760)  # Adjusted to start below the title bar
+        sidebar.setStyleSheet("background-color: #222222;")  # Customize sidebar color here
+        
+        # Add a vertical layout to the sidebar
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 20, 0, 20)  # Adjust margins to center icons vertically
+        layout.setSpacing(10)  # Minimal space between icons
+        layout.setAlignment(Qt.AlignCenter)  # Center icons horizontally in the sidebar
+
+        # Load icons and add them to the sidebar
+        icons = ["1.png", "3.png","4.png", "2.png"]  # Replace with your icon image paths
+        for icon_path in icons:
+            icon_label = QLabel()
+            icon_pixmap = QPixmap(icon_path).scaled(icon_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            icon_label.setPixmap(icon_pixmap)
+            layout.addWidget(icon_label)
+        
+        sidebar.setLayout(layout)
+        
+        # Main layout to include title bar and sidebar in a single layout
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(title_bar)
+        main_layout.addWidget(background_label)
+
+        self.show()
+
+    def toggleMaxRestore(self):
+        if self.isMaximized:
+            self.showNormal()
+        else:
+            self.showMaximized()
+        self.isMaximized = not self.isMaximized
+
+# Run the application
+app = QApplication(sys.argv)
+window = MainWindow()
+sys.exit(app.exec_())
